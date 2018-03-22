@@ -339,6 +339,8 @@ def train(create_tensor_dict_fn, create_model_fn, train_config, master, task,
     session_config = tf.ConfigProto(allow_soft_placement=True,
                                     log_device_placement=False)
 
+    session_config.gpu_options.per_process_gpu_memory_fraction = train_config.per_process_gpu_memory_fraction
+
     # Save checkpoints regularly.
     keep_checkpoint_every_n_hours = train_config.keep_checkpoint_every_n_hours
     saver = tf.train.Saver(

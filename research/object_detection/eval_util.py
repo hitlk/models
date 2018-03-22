@@ -201,7 +201,8 @@ def _run_checkpoint_once(tensor_dict,
                          num_batches=1,
                          master='',
                          save_graph=False,
-                         save_graph_dir=''):
+                         save_graph_dir='',
+                         eval_config=None):
   """Evaluates metrics defined in evaluators.
 
   This function loads the latest checkpoint in checkpoint_dirs and evaluates
@@ -240,6 +241,7 @@ def _run_checkpoint_once(tensor_dict,
     save_graph: whether or not the Tensorflow graph is stored as a pbtxt file.
     save_graph_dir: where to store the Tensorflow graph on disk. If save_graph
       is True this must be non-empty.
+    eval_config: a eval_pb2.EvalConfig protobuf.
 
   Returns:
     global_step: the count of global steps.
@@ -252,7 +254,13 @@ def _run_checkpoint_once(tensor_dict,
   """
   if save_graph and not save_graph_dir:
     raise ValueError('`save_graph_dir` must be defined.')
-  sess = tf.Session(master, graph=tf.get_default_graph())
+  # sess = tf.Session(master, graph=tf.get_default_graph())
+  session_config = tf.ConfigProto()
+  if eval_config:
+      session_config.gpu_options.per_process_gpu_memory_fraction = eval_config.per_process_gpu_memory_fraction
+
+  sess = tf.Session(master, config=session_config, graph=tf.get_default_graph())
+
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
   sess.run(tf.tables_initializer())
@@ -327,7 +335,8 @@ def repeated_checkpoint_run(tensor_dict,
                             max_number_of_evaluations=None,
                             master='',
                             save_graph=False,
-                            save_graph_dir=''):
+                            save_graph_dir='',
+                            eval_config=None):
   """Periodically evaluates desired tensors using checkpoint_dirs or restore_fn.
 
   This function repeatedly loads a checkpoint and evaluates a desired
@@ -367,6 +376,7 @@ def repeated_checkpoint_run(tensor_dict,
     save_graph: whether or not the Tensorflow graph is saved as a pbtxt file.
     save_graph_dir: where to save on disk the Tensorflow graph. If store_graph
       is True this must be non-empty.
+    eval_config: a eval_pb2.EvalConfig protobuf.
 
   Returns:
     metrics: A dictionary containing metric names and values in the latest
@@ -404,7 +414,8 @@ def repeated_checkpoint_run(tensor_dict,
                                                   variables_to_restore,
                                                   restore_fn, num_batches,
                                                   master, save_graph,
-                                                  save_graph_dir)
+                                                  save_graph_dir,
+                                                  eval_config)
       write_metrics(metrics, global_step, summary_dir)
     number_of_evaluations += 1
 

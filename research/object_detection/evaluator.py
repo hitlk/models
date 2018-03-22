@@ -242,6 +242,7 @@ def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
                                  if eval_config.max_evals else None),
       master=eval_config.eval_master,
       save_graph=eval_config.save_graph,
-      save_graph_dir=(eval_dir if eval_config.save_graph else ''))
+      save_graph_dir=(eval_dir if eval_config.save_graph else ''),
+      eval_config=eval_config)
 
   return metrics
