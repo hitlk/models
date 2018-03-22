@@ -45,6 +45,7 @@ Example usage:
 """
 import functools
 import os
+import time
 import tensorflow as tf
 
 from object_detection import evaluator
@@ -80,10 +81,25 @@ flags.DEFINE_boolean('run_once', False, 'Option to only run a single pass of '
 FLAGS = flags.FLAGS
 
 
+tf.logging.set_verbosity(tf.logging.INFO)
+
+
 def main(unused_argv):
   assert FLAGS.checkpoint_dir, '`checkpoint_dir` is missing.'
   assert FLAGS.eval_dir, '`eval_dir` is missing.'
   tf.gfile.MakeDirs(FLAGS.eval_dir)
+
+  wait_time = 300
+  while wait_time > 0:
+      latest_checkpoint = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
+      if latest_checkpoint:
+          num_steps = latest_checkpoint.split('-')[-1]
+          if int(num_steps) > 0:
+              wait_time = 0
+      if wait_time > 0:
+          tf.logging.info("waiting for checkpoint...")
+          time.sleep(wait_time)
+
   if FLAGS.pipeline_config_path:
     configs = config_util.get_configs_from_pipeline_file(
         FLAGS.pipeline_config_path)
