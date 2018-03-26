@@ -50,7 +50,7 @@ def write_metrics(metrics, global_step, summary_dir):
     ])
     summary_writer.add_summary(summary, global_step)
     logging.info('%s: %f', key, metrics[key])
-    if not job_name and key == 'PascalBoxes_Precision/mAP@0.5IOU':
+    if job_name and key == 'PascalBoxes_Precision/mAP@0.5IOU':
         mongo_util.update_precision(job_name, metrics[key])
         logging.info("Write job %s 's precision: %f." % (job_name, metrics[key]))
   logging.info('Metrics written to tf summary.')
