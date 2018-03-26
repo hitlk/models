@@ -42,7 +42,7 @@ def write_metrics(metrics, global_step, summary_dir):
     summary_dir: Directory to write tensorflow summaries to.
   """
   logging.info('Writing metrics to tf summary.')
-  job_name = os.environ("JOB_NAME")
+  job_name = os.environ["JOB_NAME"]
   summary_writer = tf.summary.FileWriterCache.get(summary_dir)
   for key in sorted(metrics):
     summary = tf.Summary(value=[
