@@ -10,4 +10,4 @@ jobs = mongo.quaty.jobs
 
 
 def update_precision(job_name, precision):
-    jobs.update({"job_name": job_name}, {"$set": {"precision": precision}})
+    jobs.update({"name": job_name}, {"$set": {"precision": precision}})
