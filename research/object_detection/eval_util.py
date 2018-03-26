@@ -28,6 +28,8 @@ from object_detection.utils import label_map_util
 from object_detection.utils import ops
 from object_detection.utils import visualization_utils as vis_utils
 
+from object_detection import mongo_util
+
 slim = tf.contrib.slim
 
 
@@ -40,6 +42,7 @@ def write_metrics(metrics, global_step, summary_dir):
     summary_dir: Directory to write tensorflow summaries to.
   """
   logging.info('Writing metrics to tf summary.')
+  job_name = os.environ("JOB_NAME")
   summary_writer = tf.summary.FileWriterCache.get(summary_dir)
   for key in sorted(metrics):
     summary = tf.Summary(value=[
@@ -47,6 +50,9 @@ def write_metrics(metrics, global_step, summary_dir):
     ])
     summary_writer.add_summary(summary, global_step)
     logging.info('%s: %f', key, metrics[key])
+    if not job_name and key == 'PascalBoxes_Precision/mAP@0.5IOU':
+        mongo_util.update_precision(job_name, metrics[key])
+        logging.info("Write job %s 's precision: %f." % (job_name, metrics[key]))
   logging.info('Metrics written to tf summary.')
 
 

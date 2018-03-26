@@ -46,6 +46,7 @@ Example usage:
 import functools
 import os
 import time
+import logging
 import tensorflow as tf
 
 from object_detection import evaluator
@@ -55,8 +56,6 @@ from object_detection.utils import config_util
 from object_detection.utils import dataset_util
 from object_detection.utils import label_map_util
 
-
-tf.logging.set_verbosity(tf.logging.INFO)
 
 flags = tf.app.flags
 flags.DEFINE_boolean('eval_training_data', False,
@@ -80,7 +79,7 @@ flags.DEFINE_boolean('run_once', False, 'Option to only run a single pass of '
                      'provided config.')
 FLAGS = flags.FLAGS
 
-
+logging.basicConfig(level=logging.INFO)
 tf.logging.set_verbosity(tf.logging.INFO)
 
 
