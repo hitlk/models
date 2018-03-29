@@ -123,7 +123,8 @@ def main(_):
 
   def transform_image(tensor_dict, image_resizer_fn):
       image = tensor_dict[fields.InputDataFields.image]
-      tensor_dict[fields.InputDataFields.image] = image_resizer_fn(image)
+      result = image_resizer_fn(image)
+      tensor_dict[fields.InputDataFields.image] = result[0]
 
       return tensor_dict
 
