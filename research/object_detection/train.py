@@ -131,7 +131,7 @@ def main(_):
     return dataset_util.make_initializable_iterator(
         dataset_builder.build(config, transform_input_data_fn=transform_input_data_fn)).get_next()
 
-  if not image_resizer_fn:
+  if image_resizer_fn:
       transform_input_data_fn = functools.partial(transform_image, image_resizer_fn=image_resizer_fn)
 
   create_input_dict_fn = functools.partial(get_next, input_config, transform_input_data_fn)
