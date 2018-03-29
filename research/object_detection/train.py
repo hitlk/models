@@ -117,7 +117,7 @@ def main(_):
       model_config=model_config,
       is_training=True)
 
-  meta_arch = model_config.WhichOne('model')
+  meta_arch = model_config.WhichOneof('model')
   if meta_arch == 'faster_rcnn':
       image_resizer_fn = image_resizer_builder.build(model_config.faster_rcnn)
 
@@ -133,7 +133,7 @@ def main(_):
 
   if not image_resizer_fn:
       transform_input_data_fn = functools.partial(transform_image, image_resizer_fn=image_resizer_fn)
-      
+
   create_input_dict_fn = functools.partial(get_next, input_config, transform_input_data_fn)
 
   env = json.loads(os.environ.get('TF_CONFIG', '{}'))
