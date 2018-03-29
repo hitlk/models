@@ -119,7 +119,7 @@ def main(_):
 
   meta_arch = model_config.WhichOneof('model')
   if meta_arch == 'faster_rcnn':
-      image_resizer_fn = image_resizer_builder.build(model_config.faster_rcnn)
+      image_resizer_fn = image_resizer_builder.build(model_config.faster_rcnn.image_resizer)
 
   def transform_image(tensor_dict, image_resizer_fn):
       image = tensor_dict[fields.InputDataFields.image]
