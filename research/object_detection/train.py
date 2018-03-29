@@ -117,25 +117,11 @@ def main(_):
       model_config=model_config,
       is_training=True)
 
-  meta_arch = model_config.WhichOneof('model')
-  if meta_arch == 'faster_rcnn':
-      image_resizer_fn = image_resizer_builder.build(model_config.faster_rcnn.image_resizer)
-
-  def transform_image(tensor_dict, image_resizer_fn):
-      image = tensor_dict[fields.InputDataFields.image]
-      result = image_resizer_fn(image)
-      tensor_dict[fields.InputDataFields.image] = result[0]
-
-      return tensor_dict
-
-  def get_next(config, transform_input_data_fn):
+  def get_next(config):
     return dataset_util.make_initializable_iterator(
-        dataset_builder.build(config, transform_input_data_fn=transform_input_data_fn)).get_next()
+        dataset_builder.build(config)).get_next()
 
-  if image_resizer_fn:
-      transform_input_data_fn = functools.partial(transform_image, image_resizer_fn=image_resizer_fn)
-
-  create_input_dict_fn = functools.partial(get_next, input_config, transform_input_data_fn)
+  create_input_dict_fn = functools.partial(get_next, input_config)
 
   env = json.loads(os.environ.get('TF_CONFIG', '{}'))
   cluster_data = env.get('cluster', None)
