@@ -49,10 +49,8 @@ import tensorflow as tf
 from object_detection import trainer
 from object_detection.builders import dataset_builder
 from object_detection.builders import model_builder
-from object_detection.builders import image_resizer_builder
 from object_detection.utils import config_util
 from object_detection.utils import dataset_util
-from object_detection.core import standard_fields as fields
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
