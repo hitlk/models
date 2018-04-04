@@ -73,7 +73,7 @@ def _extract_prediction_tensors(model,
       with tf.device('/CPU:0'):
           input_dict = data_augmentation_util.preprocess_for_detection(input_dict)
 
-  prefetch_queue = prefetcher.prefetch(input_dict, capacity=500)
+  prefetch_queue = prefetcher.prefetch(input_dict, capacity=30)
   input_dict = prefetch_queue.dequeue()
 
   original_image = tf.expand_dims(input_dict[fields.InputDataFields.image], 0)
