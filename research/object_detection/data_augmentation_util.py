@@ -273,10 +273,10 @@ def preprocess_for_detection(input_dict):
 
 def preprocess_for_cls(input_dict):
     image = input_dict[fields.InputDataFields.image]
-    image = normalize_image(image, 0, 255, 0, 1)
-    image = random_distort_color(image)
-    image = normalize_image(image, 0, 1, 0, 255)
+    boxes = input_dict[fields.InputDataFields.groundtruth_boxes]
+    image, boxes = random_horizontal_flip(image, boxes)
     input_dict[fields.InputDataFields.image] = image
+    input_dict[fields.InputDataFields.groundtruth_boxes] = boxes
     return input_dict
 
 
