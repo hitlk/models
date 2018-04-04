@@ -213,7 +213,7 @@ def random_horizontal_flip(image, boxes=None):
 
     with tf.name_scope('RandomHorizontalFlip', values=[image, boxes]):
         do_a_flip_random = tf.random_uniform([])
-        do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
+        do_a_flip_random = tf.greater(do_a_flip_random, 0)
         image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
 
         result.append(image)
@@ -274,7 +274,7 @@ def preprocess_for_detection(input_dict):
 def preprocess_for_cls(input_dict):
     image = input_dict[fields.InputDataFields.image]
     boxes = input_dict[fields.InputDataFields.groundtruth_boxes]
-    # image, boxes = random_horizontal_flip(image, boxes)
+    image, boxes = random_horizontal_flip(image, boxes)
     input_dict[fields.InputDataFields.image] = image
     input_dict[fields.InputDataFields.groundtruth_boxes] = boxes
     return input_dict
