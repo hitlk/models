@@ -200,6 +200,9 @@ class ObjectDetectionEvaluator(DetectionEvaluator):
         raise ValueError('Instance masks not in groundtruth dictionary.')
       groundtruth_masks = groundtruth_dict[
           standard_fields.InputDataFields.groundtruth_instance_masks]
+    logging.info('labels: {}, boxes: {}'.format(groundtruth_dict[
+                                                    standard_fields.InputDataFields.groundtruth_boxes].shape,
+                                                groundtruth_classes.shape))
     self._evaluation.add_single_ground_truth_image_info(
         image_key=image_id,
         groundtruth_boxes=groundtruth_dict[
