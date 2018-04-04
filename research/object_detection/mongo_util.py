@@ -1,7 +1,7 @@
 import os
 from pymongo import MongoClient
 
-mongo_url = os.environ.get(key="MONGO_URL", default="mongodb://10.34.163.245:32768")
+mongo_url = os.environ.get("MONGO_URL", "mongodb://10.34.163.245:32768")
 
 mongo = MongoClient(mongo_url)
 jobs = mongo.quaty.jobs
