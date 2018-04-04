@@ -22,6 +22,7 @@ import logging
 import tensorflow as tf
 
 from object_detection import eval_util
+from object_detection import data_augmentation
 from object_detection.core import prefetcher
 from object_detection.core import standard_fields as fields
 from object_detection.metrics import coco_evaluation
@@ -52,7 +53,8 @@ EVAL_DEFAULT_METRIC = 'pascal_voc_detection_metrics'
 
 def _extract_prediction_tensors(model,
                                 create_input_dict_fn,
-                                ignore_groundtruth=False):
+                                ignore_groundtruth=False,
+                                data_augmentation=False):
   """Restores the model in a tensorflow session.
 
   Args:
@@ -66,6 +68,11 @@ def _extract_prediction_tensors(model,
   input_dict = create_input_dict_fn()
   prefetch_queue = prefetcher.prefetch(input_dict, capacity=500)
   input_dict = prefetch_queue.dequeue()
+
+  # data augmentation
+  if data_augmentation:
+      input_dict = data_augmentation.preprocess_for_detection(input_dict)
+
   original_image = tf.expand_dims(input_dict[fields.InputDataFields.image], 0)
   preprocessed_image, true_image_shapes = model.preprocess(
       tf.to_float(original_image))
@@ -128,7 +135,8 @@ def get_evaluators(eval_config, categories):
 
 
 def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
-             checkpoint_dir, eval_dir, graph_hook_fn=None, evaluator_list=None):
+             checkpoint_dir, eval_dir, graph_hook_fn=None, evaluator_list=None,
+             data_augmentation=False):
   """Evaluation function for detection models.
 
   Args:
@@ -145,6 +153,7 @@ def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
       the default graph.
     evaluator_list: Optional list of instances of DetectionEvaluator. If not
       given, this list of metrics is created according to the eval_config.
+    data_augmentation: If evaluating with train_data, should do data augmentation.
 
   Returns:
     metrics: A dictionary containing metric names and values from the latest
@@ -160,7 +169,8 @@ def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
   tensor_dict = _extract_prediction_tensors(
       model=model,
       create_input_dict_fn=create_input_dict_fn,
-      ignore_groundtruth=eval_config.ignore_groundtruth)
+      ignore_groundtruth=eval_config.ignore_groundtruth,
+      data_augmentation=data_augmentation)
 
   def _process_batch(tensor_dict, sess, batch_index, counters):
     """Evaluates tensors in tensor_dict, visualizing the first K examples.
