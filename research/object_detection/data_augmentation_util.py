@@ -161,7 +161,7 @@ def random_crop_to_aspect_ratio(image,
         result = [new_image, new_boxes, new_labels]
 
         if difficult is not None:
-            new_difficult = new_boxlist.get_filed('difficult')
+            new_difficult = new_boxlist.get_field('difficult')
             result.append(new_difficult)
 
         return tuple(result)
