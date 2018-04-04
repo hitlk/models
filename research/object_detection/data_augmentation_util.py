@@ -109,6 +109,7 @@ def random_distort_color(image):
 def random_crop_to_aspect_ratio(image,
                                 boxes,
                                 labels,
+                                difficult=None,
                                 aspect_ratio=21. / 9.,
                                 overlap_thresh=0.3):
     with tf.name_scope('RandomCropToAspectRatio', values=[image]):
@@ -143,6 +144,9 @@ def random_crop_to_aspect_ratio(image,
         boxlist = box_list.BoxList(boxes)
         boxlist.add_field('labels', labels)
 
+        if difficult is not None:
+            boxlist.add_field('difficult', difficult)
+
         im_boxlist = box_list.BoxList(tf.expand_dims(im_box, axis=0))
 
         # remove boxes whose overlap with the image is less than overlap_thresh
@@ -155,6 +159,10 @@ def random_crop_to_aspect_ratio(image,
         new_boxes = new_boxlist.get()
 
         result = [new_image, new_boxes, new_labels]
+
+        if difficult is not None:
+            new_difficult = new_boxlist.get_filed('difficult')
+            result.append(new_difficult)
 
         return tuple(result)
 
@@ -232,10 +240,20 @@ def preprocess_for_detection(input_dict):
     image = random_distort_color(image)
 
     # random crop
+    difficult = None
+    if fields.InputDataFields.groundtruth_difficult in input_dict:
+        difficult = input_dict[fields.InputDataFields.groundtruth_difficult]
+
+    args = [image, boxes, labels, difficult]
+
     do_a_crop = tf.random_uniform([], minval=0.0, maxval=1.0)
-    image, boxes, labels = tf.cond(tf.greater(do_a_crop, 0.3),
-                                   lambda: (image, boxes, labels),
-                                   lambda: random_crop_to_aspect_ratio(image, boxes, labels))
+    result = tf.cond(tf.greater(do_a_crop, 0.3),
+                     lambda: args,
+                     lambda: random_crop_to_aspect_ratio(*args))
+
+    image, boxes, labels = result[:3]
+    if difficult is not None:
+        difficult = result[3]
 
     # add noise
     image = random_salt_pepper_noise(image)
@@ -246,6 +264,9 @@ def preprocess_for_detection(input_dict):
     input_dict[fields.InputDataFields.image] = image
     input_dict[fields.InputDataFields.groundtruth_boxes] = boxes
     input_dict[fields.InputDataFields.groundtruth_classes] = labels
+
+    if fields.InputDataFields.groundtruth_difficult in input_dict:
+        input_dict[fields.InputDataFields.groundtruth_difficult] = difficult
 
     return input_dict
 
