@@ -143,7 +143,8 @@ def main(unused_argv):
     eval_config.max_evals = 1
 
   evaluator.evaluate(create_input_dict_fn, model_fn, eval_config, categories,
-                     FLAGS.checkpoint_dir, FLAGS.eval_dir, FLAGS.eval_training_data)
+                     FLAGS.checkpoint_dir, FLAGS.eval_dir,
+                     data_aumentation=FLAGS.eval_training_data)
 
 
 if __name__ == '__main__':
