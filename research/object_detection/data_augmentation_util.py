@@ -248,7 +248,7 @@ def preprocess_for_detection(input_dict):
 
     do_a_crop = tf.random_uniform([], minval=0.0, maxval=1.0)
     result = tf.cond(tf.greater(do_a_crop, 0.3),
-                     lambda: args,
+                     lambda: tuple(args),
                      lambda: random_crop_to_aspect_ratio(*args))
 
     image, boxes, labels = result[:3]
