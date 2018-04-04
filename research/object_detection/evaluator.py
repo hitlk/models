@@ -22,7 +22,7 @@ import logging
 import tensorflow as tf
 
 from object_detection import eval_util
-from object_detection import data_augmentation
+from object_detection import data_augmentation_util
 from object_detection.core import prefetcher
 from object_detection.core import standard_fields as fields
 from object_detection.metrics import coco_evaluation
@@ -71,7 +71,8 @@ def _extract_prediction_tensors(model,
 
   # data augmentation
   if data_augmentation:
-      input_dict = data_augmentation.preprocess_for_detection(input_dict)
+      logging.info('data augmentation for evaluation...')
+      input_dict = data_augmentation_util.preprocess_for_detection(input_dict)
 
   original_image = tf.expand_dims(input_dict[fields.InputDataFields.image], 0)
   preprocessed_image, true_image_shapes = model.preprocess(
