@@ -66,13 +66,14 @@ def _extract_prediction_tensors(model,
     tensor_dict: A tensor dictionary with evaluations.
   """
   input_dict = create_input_dict_fn()
-  prefetch_queue = prefetcher.prefetch(input_dict, capacity=500)
-  input_dict = prefetch_queue.dequeue()
 
   # data augmentation
   if data_augmentation:
       logging.info('data augmentation for evaluation...')
-      input_dict = data_augmentation_util.preprocess_for_cls(input_dict)
+      input_dict = data_augmentation_util.preprocess_for_detection(input_dict)
+
+  prefetch_queue = prefetcher.prefetch(input_dict, capacity=500)
+  input_dict = prefetch_queue.dequeue()
 
   original_image = tf.expand_dims(input_dict[fields.InputDataFields.image], 0)
   preprocessed_image, true_image_shapes = model.preprocess(
