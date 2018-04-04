@@ -272,6 +272,9 @@ def preprocess_for_detection(input_dict):
 
 
 def preprocess_for_cls(input_dict):
+    image = input_dict[fields.InputDataFields.image]
+    image = random_distort_color(image)
+    input_dict[fields.InputDataFields.image] = image
     return input_dict
 
 
