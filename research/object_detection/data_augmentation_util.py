@@ -271,6 +271,10 @@ def preprocess_for_detection(input_dict):
     return input_dict
 
 
+def preprocess_for_cls(input_dict):
+    return input_dict
+
+
 if __name__ == '__main__':
     record_path = '/data/demo/demo_train.record'
     preprocess_for_detection(record_path)

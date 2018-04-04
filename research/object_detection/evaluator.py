@@ -72,7 +72,7 @@ def _extract_prediction_tensors(model,
   # data augmentation
   if data_augmentation:
       logging.info('data augmentation for evaluation...')
-      input_dict = data_augmentation_util.preprocess_for_detection(input_dict)
+      input_dict = data_augmentation_util.preprocess_for_cls(input_dict)
 
   original_image = tf.expand_dims(input_dict[fields.InputDataFields.image], 0)
   preprocessed_image, true_image_shapes = model.preprocess(
