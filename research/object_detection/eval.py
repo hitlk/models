@@ -123,10 +123,13 @@ def main(unused_argv):
   if FLAGS.eval_training_data:
     input_config = configs['train_input_config']
 
+  do_augmentation = False
+
   if input_config.WhichOneof('input_reader') == 'tf_record_input_reader':
       input_reader_config = input_config.tf_record_input_reader
       input_path = input_reader_config.input_path
       if not input_path or not input_path[0]:
+          do_augmentation = True
           train_input_config = configs['train_input_config']
           train_input_reader_config = train_input_config.tf_record_input_reader
           input_reader_config.input_path[:] = train_input_reader_config.input_path[:]
@@ -153,7 +156,7 @@ def main(unused_argv):
 
   evaluator.evaluate(create_input_dict_fn, model_fn, eval_config, categories,
                      FLAGS.checkpoint_dir, FLAGS.eval_dir,
-                     data_augmentation=True)
+                     do_augmentation=do_augmentation)
 
 
 if __name__ == '__main__':

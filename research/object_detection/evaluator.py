@@ -54,7 +54,7 @@ EVAL_DEFAULT_METRIC = 'pascal_voc_detection_metrics'
 def _extract_prediction_tensors(model,
                                 create_input_dict_fn,
                                 ignore_groundtruth=False,
-                                data_augmentation=False):
+                                do_augmentation=False):
   """Restores the model in a tensorflow session.
 
   Args:
@@ -68,10 +68,10 @@ def _extract_prediction_tensors(model,
   input_dict = create_input_dict_fn()
 
   # data augmentation
-  if data_augmentation:
+  if do_augmentation:
       logging.info('data augmentation for evaluation...')
       with tf.device('/CPU:0'):
-          input_dict = data_augmentation_util.preprocess_for_cls(input_dict)
+          input_dict = data_augmentation_util.preprocess_for_detection(input_dict)
   prefetch_queue = prefetcher.prefetch(input_dict, capacity=30)
   input_dict = prefetch_queue.dequeue()
 
@@ -138,7 +138,7 @@ def get_evaluators(eval_config, categories):
 
 def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
              checkpoint_dir, eval_dir, graph_hook_fn=None, evaluator_list=None,
-             data_augmentation=False):
+             do_augmentation=False):
   """Evaluation function for detection models.
 
   Args:
@@ -172,7 +172,7 @@ def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
       model=model,
       create_input_dict_fn=create_input_dict_fn,
       ignore_groundtruth=eval_config.ignore_groundtruth,
-      data_augmentation=data_augmentation)
+      do_augmentation=do_augmentation)
 
   def _process_batch(tensor_dict, sess, batch_index, counters):
     """Evaluates tensors in tensor_dict, visualizing the first K examples.
