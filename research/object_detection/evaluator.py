@@ -71,7 +71,8 @@ def _extract_prediction_tensors(model,
   if data_augmentation:
       logging.info('data augmentation for evaluation...')
       with tf.device('/CPU:0'):
-          input_dict = data_augmentation_util.preprocess_for_cls(input_dict)
+          # input_dict = data_augmentation_util.preprocess_for_cls(input_dict)
+          input_dict = input_dict
   prefetch_queue = prefetcher.prefetch(input_dict, capacity=30)
   input_dict = prefetch_queue.dequeue()
 
