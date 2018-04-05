@@ -134,7 +134,6 @@ def main(unused_argv):
           train_input_reader_config = train_input_config.tf_record_input_reader
           input_reader_config.input_path[:] = train_input_reader_config.input_path[:]
 
-  print(input_config)
   model_fn = functools.partial(
       model_builder.build,
       model_config=model_config,
