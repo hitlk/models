@@ -123,6 +123,14 @@ def main(unused_argv):
   if FLAGS.eval_training_data:
     input_config = configs['train_input_config']
 
+  if input_config.WhichOneof('input_reader') == 'tf_record_input_reader':
+      input_reader_config = input_config.tf_record_input_reader
+      input_path = input_reader_config.input_path
+      if not input_path:
+          train_input_config = configs['train_input_config']
+          train_input_reader_config = train_input_config.tf_record_input_reader
+          input_reader_config.input_path = train_input_reader_config.input_path
+
   model_fn = functools.partial(
       model_builder.build,
       model_config=model_config,
