@@ -126,7 +126,7 @@ def main(unused_argv):
   if input_config.WhichOneof('input_reader') == 'tf_record_input_reader':
       input_reader_config = input_config.tf_record_input_reader
       input_path = input_reader_config.input_path
-      if not input_path:
+      if not input_path or not input_path[0]:
           train_input_config = configs['train_input_config']
           train_input_reader_config = train_input_config.tf_record_input_reader
           input_reader_config.input_path = train_input_reader_config.input_path
