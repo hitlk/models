@@ -277,6 +277,9 @@ def preprocess_for_cls(input_dict):
     # image, boxes = random_horizontal_flip(image, boxes)
     # input_dict[fields.InputDataFields.image] = image
     # input_dict[fields.InputDataFields.groundtruth_boxes] = boxes
+    image = input_dict[fields.InputDataFields.image]
+    images = tf.expand_dims(image, 0)
+    input_dict[fields.InputDataFields.image] = tf.squeeze(images, 0)
     return input_dict
 
 
