@@ -129,7 +129,7 @@ def main(unused_argv):
       if not input_path or not input_path[0]:
           train_input_config = configs['train_input_config']
           train_input_reader_config = train_input_config.tf_record_input_reader
-          input_reader_config.input_path = train_input_reader_config.input_path
+          input_reader_config.input_path.CopyFrom(train_input_reader_config.input_path)
 
   print(input_config)
   model_fn = functools.partial(
