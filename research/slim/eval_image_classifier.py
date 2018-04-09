@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import math
+import time
 import tensorflow as tf
 
 from datasets import dataset_factory
@@ -28,7 +29,7 @@ from preprocessing import preprocessing_factory
 slim = tf.contrib.slim
 
 tf.app.flags.DEFINE_integer(
-    'batch_size', 100, 'The number of samples in each batch.')
+    'batch_size', 32, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
     'max_num_batches', None,
@@ -87,6 +88,17 @@ def main(_):
     raise ValueError('You must supply the dataset directory with --dataset_dir')
 
   tf.logging.set_verbosity(tf.logging.INFO)
+
+  wait_checkpoint_secs = 300
+  while True:
+      model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
+      if not model_path:
+          tf.logging.info('No model found in %s, will try again after %d seconds.' %
+                          (FLAGS.checkpoint_dir, wait_checkpoint_secs))
+          time.sleep(wait_checkpoint_secs)
+      else:
+          break
+
   with tf.Graph().as_default():
     tf_global_step = slim.get_or_create_global_step()
 
@@ -178,13 +190,18 @@ def main(_):
 
     tf.logging.info('Evaluating %s' % checkpoint_path)
 
-    slim.evaluation.evaluate_once(
+    eval_interval_secs = 1800
+    session_config = tf.ConfigProto()
+    session_config.gpu_options.per_process_gpu_memory_fraction = 0.4
+    slim.evaluation.evaluate_loop(
         master=FLAGS.master,
         checkpoint_path=checkpoint_path,
         logdir=FLAGS.eval_dir,
         num_evals=num_batches,
         eval_op=list(names_to_updates.values()),
-        variables_to_restore=variables_to_restore)
+        variables_to_restore=variables_to_restore,
+        eval_interval_secs=eval_interval_secs,
+        session_config=session_config)
 
 
 if __name__ == '__main__':
