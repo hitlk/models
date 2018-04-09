@@ -34,6 +34,7 @@ def get_split(split_name, dataset_name, dataset_dir):
 
     num_classes = len(labels_to_names.keys())
     num_samples = os.environ.get(split_name.upper(), 0)
+    num_samples = int(num_samples)
     return slim.dataset.Dataset(
         data_sources=file_pattern,
         reader=reader,
