@@ -29,7 +29,7 @@ from preprocessing import preprocessing_factory
 slim = tf.contrib.slim
 
 tf.app.flags.DEFINE_integer(
-    'batch_size', 32, 'The number of samples in each batch.')
+    'batch_size', 100, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
     'max_num_batches', None,
@@ -190,18 +190,43 @@ def main(_):
 
     tf.logging.info('Evaluating %s' % checkpoint_path)
 
+    num_evaluations = 0
+    last_evaluated_model_path = None
     eval_interval_secs = 1800
-    session_config = tf.ConfigProto()
-    session_config.gpu_options.per_process_gpu_memory_fraction = 0.4
-    slim.evaluation.evaluate_loop(
-        master=FLAGS.master,
-        checkpoint_path=checkpoint_path,
-        logdir=FLAGS.eval_dir,
-        num_evals=num_batches,
-        eval_op=list(names_to_updates.values()),
-        variables_to_restore=variables_to_restore,
-        eval_interval_secs=eval_interval_secs,
-        session_config=session_config)
+    max_num_evaluations = None
+    while True:
+        start = time.time()
+        tf.logging.info('Starting evaluation at ' + time.strftime(
+            '%Y-%m-%d %H:%M:%S', time.gmtime()))
+        model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
+        if not model_path:
+            tf.logging.info('Not found model in %s, will try again after %d seconds.' %
+                            (FLAGS.checkpoint_dir, eval_interval_secs))
+        elif model_path == last_evaluated_model_path:
+            tf.logging.info('Found already evaluated model, will try again after %d seconds.' %
+                            eval_interval_secs)
+        else:
+            last_evaluated_model_path = model_path
+            metric_values = slim.evaluation.evaluate_once(
+                            master=FLAGS.master,
+                            checkpoint_path=checkpoint_path,
+                            logdir=FLAGS.eval_dir,
+                            num_evals=num_batches,
+                            eval_op=list(names_to_updates.values()),
+                            final_op=list(names_to_updates.values()),
+                            variables_to_restore=variables_to_restore)
+
+            for key, value in zip(names_to_updates.keys(), metric_values):
+                tf.logging('%s: %f' % (key, value))
+
+        num_evaluations += 1
+        if max_num_evaluations and num_evaluations >= max_num_evaluations:
+            tf.logging.info('Finished evaluation.')
+            break
+
+        time_to_next_eval = start + eval_interval_secs - time.time()
+        if time_to_next_eval > 0:
+            time.sleep(time_to_next_eval)
 
 
 if __name__ == '__main__':
