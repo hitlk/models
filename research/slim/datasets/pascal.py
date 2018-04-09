@@ -6,6 +6,7 @@ from datasets import dataset_utils
 slim = tf.contrib.slim
 
 _FILE_PATTERN = '%s_%s.record'
+_NUM_SAMPLES_PATTERN = 'NUM_%s_SAMPLES'
 
 
 def get_split(split_name, dataset_name, dataset_dir):
@@ -32,11 +33,12 @@ def get_split(split_name, dataset_name, dataset_dir):
         labels_to_names = dataset_utils.read_label_file(dataset_dir)
 
     num_classes = len(labels_to_names.keys())
+    num_samples = os.environ.get(split_name.upper(), 0)
     return slim.dataset.Dataset(
         data_sources=file_pattern,
         reader=reader,
         decoder=decoder,
-        num_samples=0,
+        num_samples=num_samples,
         num_classes=num_classes,
         items_to_descriptions={},
         labels_to_names=labels_to_names
