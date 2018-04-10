@@ -23,6 +23,7 @@ import time
 import tensorflow as tf
 
 from datasets import dataset_factory
+from datasets import pascal
 from nets import nets_factory
 from preprocessing import preprocessing_factory
 
@@ -105,8 +106,9 @@ def main(_):
     ######################
     # Select the dataset #
     ######################
-    dataset = dataset_factory.get_dataset(
-        FLAGS.dataset_name, FLAGS.dataset_split_name, FLAGS.dataset_dir)
+    # dataset = dataset_factory.get_dataset(
+    #     FLAGS.dataset_name, FLAGS.dataset_split_name, FLAGS.dataset_dir)
+    dataset = pascal.get_split(FLAGS.dataset_split_name, FLAGS.dataset_name, FLAGS.dataset_dir)
 
     ####################
     # Select the model #
