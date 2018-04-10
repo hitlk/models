@@ -399,16 +399,16 @@ def main(_):
 
   # evaluate checkpoint's performance while training
   subprocess.Popen([
-      "python", "eval_image_classifier.py",
-      "--alsologtostderr",
-      "--checkpoint_path", FLAGS.train_dir,
-      "--dataset_dir", FLAGS.dataset_dir,
-      "--dataset_name", FLAGS.dataset_name,
-      "--dataset_split_name", "validation",
-      "--model_name", "inception_v3",
-      "--eval_dir", FLAGS.eval_dir,
-      "--batch_size", "16"
-  ])
+          "python", "slim/eval_image_classifier.py",
+          "--alsologtostderr",
+          "--checkpoint_path", FLAGS.train_dir,
+          "--dataset_dir", FLAGS.dataset_dir,
+          "--dataset_name", FLAGS.dataset_name,
+          "--dataset_split_name", "validation",
+          "--model_name", "inception_v3",
+          "--eval_dir", FLAGS.eval_dir,
+          "--batch_size", "16"],
+    cwd="/tensorflow_models/research")
   with tf.Graph().as_default():
     #######################
     # Config model_deploy #
