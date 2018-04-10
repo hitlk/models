@@ -189,7 +189,7 @@ def export_inference_graph(input_type,
                             output_directory, input_shape)
 
 
-def main():
+def main(_):
     export_inference_graph(FLAGS.input_type,
                            FLAGS.model_name,
                            FLAGS.dataset_dir,
