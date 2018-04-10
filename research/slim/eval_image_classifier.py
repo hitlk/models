@@ -91,10 +91,10 @@ def main(_):
 
   wait_checkpoint_secs = 300
   while True:
-      model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
+      model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
       if not model_path:
           tf.logging.info('No model found in %s, will try again after %d seconds.' %
-                          (FLAGS.checkpoint_dir, wait_checkpoint_secs))
+                          (FLAGS.checkpoint_path, wait_checkpoint_secs))
           time.sleep(wait_checkpoint_secs)
       else:
           break
@@ -198,7 +198,7 @@ def main(_):
         start = time.time()
         tf.logging.info('Starting evaluation at ' + time.strftime(
             '%Y-%m-%d %H:%M:%S', time.gmtime()))
-        model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
+        model_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
         if not model_path:
             tf.logging.info('Not found model in %s, will try again after %d seconds.' %
                             (FLAGS.checkpoint_dir, eval_interval_secs))
@@ -217,7 +217,7 @@ def main(_):
                             variables_to_restore=variables_to_restore)
 
             for key, value in zip(names_to_updates.keys(), metric_values):
-                tf.logging('%s: %f' % (key, value))
+                tf.logging.info('%s: %f' % (key, value))
 
         num_evaluations += 1
         if max_num_evaluations and num_evaluations >= max_num_evaluations:
