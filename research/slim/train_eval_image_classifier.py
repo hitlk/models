@@ -398,17 +398,12 @@ def main(_):
   subprocess.Popen(["tensorboard", "--logdir", FLAGS.eval_dir, "--port", "6007"])
 
   # evaluate checkpoint's performance while training
-  job_name = os.environ.get('JOB_NAME', None)
-  if job_name is None:
-      raise ValueError('JOB_NAME variable is none.')
-  dataset_dir = os.path.join('/data/jobs', job_name)
-
   subprocess.Popen([
       "python", "eval_image_classifier.py",
       "--alsologtostderr",
       "--checkpoint_path", FLAGS.train_dir,
-      "--dataset_dir", dataset_dir,
-      "--dataset_name", job_name,
+      "--dataset_dir", FLAGS.dataset_dir,
+      "--dataset_name", FLAGS.dataset_name,
       "--dataset_split_name", "validation",
       "--model_name", "inception_v3",
       "--eval_dir", FLAGS.eval_dir,
