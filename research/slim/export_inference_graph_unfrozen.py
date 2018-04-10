@@ -158,7 +158,7 @@ def _export_inference_graph(input_type,
 
         tensor_info_outputs = {}
         for k, v in outputs.items():
-            tensor_info_outputs[k] = tf.saved_model.utils.build_tensor_info(outputs[v])
+            tensor_info_outputs[k] = tf.saved_model.utils.build_tensor_info(v)
 
         signature = tf.saved_model.signature_def_utils.build_signature_def(
             inputs=tensor_info_inputs,
