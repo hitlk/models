@@ -105,6 +105,9 @@ def _build_graph(input_type, model_name, num_classes, image_size, input_shape):
         is_training=False
     )
 
+    if image_size is None:
+        image_size = network_fn.default_image_size
+
     with tf.name_scope('PreProcessing', values=[input_tensors, image_size]):
         image = tf.squeeze(input_tensors, axis=0)
         if image.dtype != tf.float32:
