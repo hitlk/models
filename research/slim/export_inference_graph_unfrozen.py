@@ -194,7 +194,7 @@ def main(_):
                            FLAGS.model_name,
                            FLAGS.dataset_dir,
                            FLAGS.dataset_name,
-                           FLAGS.trained_checkpoint_dir,
+                           FLAGS.trained_checkpoint_prefix,
                            FLAGS.output_directory)
 
 
