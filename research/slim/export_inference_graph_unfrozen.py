@@ -76,6 +76,7 @@ def _encoded_image_string_input_placeholder():
             tf.map_fn(
                 decode,
                 elems=batch_image_str_placeholder,
+                dtype=tf.uint8,
                 parallel_iterations=32,
                 back_prop=False
             ))
