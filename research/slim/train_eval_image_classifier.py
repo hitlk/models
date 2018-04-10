@@ -18,6 +18,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import subprocess
+import os
 import tensorflow as tf
 
 from datasets import dataset_factory
@@ -34,6 +36,11 @@ tf.app.flags.DEFINE_string(
 tf.app.flags.DEFINE_string(
     'train_dir', '/tmp/tfmodel/',
     'Directory where checkpoints and event logs are written to.')
+
+tf.app.flags.DEFINE_string(
+    'eval_dir', '',
+    'Directory where evaluation results are written to.'
+)
 
 tf.app.flags.DEFINE_integer('num_clones', 1,
                             'Number of model clones to deploy.')
@@ -385,6 +392,28 @@ def main(_):
     raise ValueError('You must supply the dataset directory with --dataset_dir')
 
   tf.logging.set_verbosity(tf.logging.INFO)
+
+  # start tensorboard for observing training and evaluation progress.
+  subprocess.Popen(["tensorboard", "--logdir", FLAGS.train_dir, "--port", "6006"])
+  subprocess.Popen(["tensorboard", "--logdir", FLAGS.eval_dir, "--port", "6007"])
+
+  # evaluate checkpoint's performance while training
+  job_name = os.environ.get('JOB_NAME', None)
+  if job_name is None:
+      raise ValueError('JOB_NAME variable is none.')
+  dataset_dir = os.path.join('/data/jobs', job_name)
+
+  subprocess.Popen([
+      "python", "eval_image_classifier.py",
+      "--alsologtostderr",
+      "--checkpoint_path", FLAGS.train_dir,
+      "--dataset_dir", dataset_dir,
+      "--dataset_name", job_name,
+      "--dataset_split_name", "validation",
+      "--model_name", "inception_v3",
+      "--eval_dir", FLAGS.eval_dir,
+      "--batch_size", "16"
+  ])
   with tf.Graph().as_default():
     #######################
     # Config model_deploy #

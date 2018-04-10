@@ -209,6 +209,8 @@ def main(_):
                             eval_interval_secs)
         else:
             last_evaluated_model_path = model_path
+            session_config = tf.ConfigProto()
+            session_config.gpu_options.per_process_gpu_memory_fraction = 0.4
             metric_values = slim.evaluation.evaluate_once(
                             master=FLAGS.master,
                             checkpoint_path=checkpoint_path,
@@ -216,7 +218,8 @@ def main(_):
                             num_evals=num_batches,
                             eval_op=list(names_to_updates.values()),
                             final_op=list(names_to_updates.values()),
-                            variables_to_restore=variables_to_restore)
+                            variables_to_restore=variables_to_restore,
+                            session_config=session_config)
 
             for key, value in zip(names_to_updates.keys(), metric_values):
                 tf.logging.info('%s: %f' % (key, value))
