@@ -139,7 +139,8 @@ def _export_inference_graph(input_type,
                             output_directory,
                             image_size=None,
                             input_shape=None):
-    tf.gfile.MakeDirs(output_directory)
+    if tf.gfile.Exists(output_directory):
+        tf.gfile.DeleteRecursively(output_directory)
     saved_model_path = os.path.join(output_directory)
 
     outputs, placeholder_tensor = _build_graph(input_type, model_name, num_classes, image_size, input_shape)
