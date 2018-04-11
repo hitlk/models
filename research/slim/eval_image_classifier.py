@@ -185,12 +185,12 @@ def main(_):
       # This ensures that we make a single pass over all of the data.
       num_batches = math.ceil(dataset.num_samples / float(FLAGS.batch_size))
 
-    if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
-      checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
-    else:
-      checkpoint_path = FLAGS.checkpoint_path
+    # if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
+    #   checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
+    # else:
+    #   checkpoint_path = FLAGS.checkpoint_path
 
-    tf.logging.info('Evaluating %s' % checkpoint_path)
+    # tf.logging.info('Evaluating %s' % checkpoint_path)
 
     num_evaluations = 0
     last_evaluated_model_path = None
@@ -208,12 +208,13 @@ def main(_):
             tf.logging.info('Found already evaluated model, will try again after %d seconds.' %
                             eval_interval_secs)
         else:
+            tf.logging.info('Start evaluating %s' % model_path)
             last_evaluated_model_path = model_path
             session_config = tf.ConfigProto()
             session_config.gpu_options.per_process_gpu_memory_fraction = 0.4
             metric_values = slim.evaluation.evaluate_once(
                             master=FLAGS.master,
-                            checkpoint_path=checkpoint_path,
+                            checkpoint_path=model_path,
                             logdir=FLAGS.eval_dir,
                             num_evals=num_batches,
                             eval_op=list(names_to_updates.values()),
