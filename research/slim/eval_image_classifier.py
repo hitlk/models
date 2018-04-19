@@ -18,10 +18,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
 import math
 import time
 import tensorflow as tf
 
+from object_detection import mongo_util
 from datasets import dataset_factory
 from datasets import pascal
 from nets import nets_factory
@@ -196,6 +198,8 @@ def main(_):
     last_evaluated_model_path = None
     eval_interval_secs = 1800
     max_num_evaluations = None
+
+    job_name = os.environ.get('JOB_NAME', None)
     while True:
         start = time.time()
         tf.logging.info('Starting evaluation at ' + time.strftime(
@@ -224,6 +228,8 @@ def main(_):
 
             for key, value in zip(names_to_updates.keys(), metric_values):
                 tf.logging.info('%s: %f' % (key, value))
+                if key == 'Accuracy' and job_name:
+                    mongo_util.update_precision(job_name, value)
 
         num_evaluations += 1
         if max_num_evaluations and num_evaluations >= max_num_evaluations:
