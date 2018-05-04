@@ -404,7 +404,7 @@ def main(_):
           "--checkpoint_path", FLAGS.train_dir,
           "--dataset_dir", FLAGS.dataset_dir,
           "--dataset_name", FLAGS.dataset_name,
-          "--dataset_split_name", "validation",
+          "--dataset_split_name", "eval",
           "--model_name", "inception_v3",
           "--eval_dir", FLAGS.eval_dir,
           "--batch_size", "16"],

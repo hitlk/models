@@ -53,7 +53,8 @@ EVAL_DEFAULT_METRIC = 'pascal_voc_detection_metrics'
 
 def _extract_predictions_and_losses(model,
                                     create_input_dict_fn,
-                                    ignore_groundtruth=False):
+                                    ignore_groundtruth=False,
+                                    do_augmentation=False):
   """Constructs tensorflow detection graph and returns output tensors.
   Args:
     model: model to perform predictions with.
@@ -175,7 +176,7 @@ def evaluate(create_input_dict_fn, create_model_fn, eval_config, categories,
       the default graph.
     evaluator_list: Optional list of instances of DetectionEvaluator. If not
       given, this list of metrics is created according to the eval_config.
-    data_augmentation: If evaluating with train_data, should do data augmentation.
+    do_augmentation: If evaluating with train_data, should do data augmentation.
 
   Returns:
     metrics: A dictionary containing metric names and values from the latest
