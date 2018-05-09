@@ -229,7 +229,7 @@ def main(_):
             for key, value in zip(names_to_updates.keys(), metric_values):
                 tf.logging.info('%s: %f' % (key, value))
                 if key == 'Accuracy' and job_name:
-                    mongo_util.update_precision(job_name, '%f' % value)
+                    mongo_util.update_precision(job_name, float(value))
 
         num_evaluations += 1
         if max_num_evaluations and num_evaluations >= max_num_evaluations:
