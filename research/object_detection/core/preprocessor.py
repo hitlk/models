@@ -444,7 +444,7 @@ def random_horizontal_flip(image,
                            boxes=None,
                            masks=None,
                            keypoints=None,
-                           skip_rand_hflip=False,
+                           skip_rand_hflip=None,
                            keypoint_flip_permutation=None,
                            seed=None,
                            preprocess_vars_cache=None):
@@ -504,15 +504,16 @@ def random_horizontal_flip(image,
     result = []
     # random variable defining whether to do flip or not
     generator_func = functools.partial(tf.random_uniform, [], seed=seed)
-    if not skip_rand_hflip:
-      do_a_flip_random = _get_or_create_preprocess_rand_vars(
-        generator_func,
-        preprocessor_cache.PreprocessorCache.HORIZONTAL_FLIP,
-        preprocess_vars_cache)
-      do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
+    do_a_flip_random = _get_or_create_preprocess_rand_vars(
+      generator_func,
+      preprocessor_cache.PreprocessorCache.HORIZONTAL_FLIP,
+      preprocess_vars_cache)
+    do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
 
-      # flip image
-      image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
+    if skip_rand_hflip is not None:
+      do_a_flip_random = tf.logical_and(tf.equal(skip_rand_hflip, 0), do_a_flip_random)
+    # flip image
+    image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
     result.append(image)
 
     # flip boxes
