@@ -152,6 +152,8 @@ class TfExampleDecoder(data_decoder.DataDecoder):
             tf.FixedLenFeature((), tf.int64, 1),
         'image/width':
             tf.FixedLenFeature((), tf.int64, 1),
+        'image/skip_rand_hflip':
+            tf.FixedLenFeature((), tf.int64, default_value=0),
         # Object boxes and classes.
         'image/object/bbox/xmin':
             tf.VarLenFeature(tf.float32),
@@ -194,6 +196,8 @@ class TfExampleDecoder(data_decoder.DataDecoder):
             slim_example_decoder.Tensor('image/key/sha256')),
         fields.InputDataFields.filename: (
             slim_example_decoder.Tensor('image/filename')),
+        fields.InputDataFields.skip_rand_hflip: (
+            slim_example_decoder.Tensor('image/skip_rand_hflip')),
         # Object boxes and classes.
         fields.InputDataFields.groundtruth_boxes: (
             slim_example_decoder.BoundingBox(['ymin', 'xmin', 'ymax', 'xmax'],

@@ -444,6 +444,7 @@ def random_horizontal_flip(image,
                            boxes=None,
                            masks=None,
                            keypoints=None,
+                           skip_rand_hflip=False,
                            keypoint_flip_permutation=None,
                            seed=None,
                            preprocess_vars_cache=None):
@@ -503,14 +504,15 @@ def random_horizontal_flip(image,
     result = []
     # random variable defining whether to do flip or not
     generator_func = functools.partial(tf.random_uniform, [], seed=seed)
-    do_a_flip_random = _get_or_create_preprocess_rand_vars(
+    if not skip_rand_hflip:
+      do_a_flip_random = _get_or_create_preprocess_rand_vars(
         generator_func,
         preprocessor_cache.PreprocessorCache.HORIZONTAL_FLIP,
         preprocess_vars_cache)
-    do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
+      do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
 
-    # flip image
-    image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
+      # flip image
+      image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
     result.append(image)
 
     # flip boxes
@@ -2953,6 +2955,7 @@ def get_default_func_arg_map(include_label_scores=False,
           fields.InputDataFields.groundtruth_boxes,
           groundtruth_instance_masks,
           groundtruth_keypoints,
+          fields.InputDataFields.skip_rand_hflip
       ),
       random_vertical_flip: (
           fields.InputDataFields.image,

@@ -91,7 +91,7 @@ class InputDataFields(object):
   true_image_shape = 'true_image_shape'
   verified_labels = 'verified_labels'
   multiclass_scores = 'multiclass_scores'
-
+  skip_rand_hflip = 'skip_rand_hflip'
 
 class DetectionResultFields(object):
   """Naming conventions for storing the output of the detector.
