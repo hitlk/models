@@ -204,7 +204,7 @@ def random_salt_pepper_noise(image,
     return image
 
 
-def random_horizontal_flip(image, boxes=None):
+def random_horizontal_flip(image, boxes=None, skip_rand_hflip=None):
     result = []
 
     def _flip_image(image):
@@ -214,6 +214,8 @@ def random_horizontal_flip(image, boxes=None):
     with tf.name_scope('RandomHorizontalFlip', values=[image, boxes]):
         do_a_flip_random = tf.random_uniform([])
         do_a_flip_random = tf.greater(do_a_flip_random, 0.5)
+        if skip_rand_hflip is not None:
+            do_a_flip_random = tf.logical_and(tf.equal(skip_rand_hflip, 0), do_a_flip_random)
         image = tf.cond(do_a_flip_random, lambda: _flip_image(image), lambda: image)
 
         result.append(image)
@@ -229,12 +231,13 @@ def preprocess_for_detection(input_dict):
     image = input_dict[fields.InputDataFields.image]
     boxes = input_dict[fields.InputDataFields.groundtruth_boxes]
     labels = input_dict[fields.InputDataFields.groundtruth_classes]
+    skip_rand_hflip = input_dict[fields.InputDataFields.skip_rand_hflip]
 
     # normalize
     image = normalize_image(image, 0, 255, 0, 1)
 
     # random horizontal flip
-    image, boxes = random_horizontal_flip(image, boxes)
+    image, boxes = random_horizontal_flip(image, boxes, skip_rand_hflip)
 
     # color distort
     image = random_distort_color(image)
