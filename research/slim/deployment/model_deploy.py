@@ -648,7 +648,8 @@ class DeploymentConfig(object):
     device = ''
     if self._num_ps_tasks > 0:
       device += self._ps_device
-    device += '/device:CPU:0'
+    # auto select in standalone mode
+    # device += '/device:CPU:0'
 
     class _PSDeviceChooser(object):
       """Slim device chooser for variables when using PS."""
