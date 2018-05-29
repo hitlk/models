@@ -333,9 +333,9 @@ def train(create_tensor_dict_fn,
         graph_hook_fn()
 
     # Add summaries.
-    for model_var in slim.get_model_variables():
-      global_summaries.add(tf.summary.histogram('ModelVars/' +
-                                                model_var.op.name, model_var))
+    # for model_var in slim.get_model_variables():
+    #   global_summaries.add(tf.summary.histogram('ModelVars/' +
+    #                                             model_var.op.name, model_var))
     for loss_tensor in tf.losses.get_losses():
       global_summaries.add(tf.summary.scalar('Losses/' + loss_tensor.op.name,
                                              loss_tensor))

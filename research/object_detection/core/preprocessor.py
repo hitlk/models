@@ -2190,16 +2190,9 @@ def resize_to_range(image,
     new_image = tf.image.resize_images(
       image, new_size[:-1], method=method, align_corners=align_corners)
 
-    # if pad_to_max_dimension:
-    #   new_image = tf.image.pad_to_bounding_box(
-    #     new_image, 0, 0, max_dimension, max_dimension)
-
     if pad_to_max_dimension:
-      stride = tf.to_float(16.0)
-      target_size = stride * tf.ceil(tf.to_float(new_size) / stride)
-      target_size = tf.to_int32(target_size)
       new_image = tf.image.pad_to_bounding_box(
-        new_image, 0, 0, target_size[0], target_size[1])
+        new_image, 0, 0, max_dimension, max_dimension)
 
     result = [new_image]
     if masks is not None:
