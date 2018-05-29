@@ -317,7 +317,8 @@ def train(create_tensor_dict_fn,
       # Optionally clip gradients
       if train_config.gradient_clipping_by_norm > 0:
         with tf.name_scope('clip_grads'):
-          grads_and_vars = slim.learning.clip_gradient_norms(
+          with tf.device('/GPU:0'):
+            grads_and_vars = slim.learning.clip_gradient_norms(
               grads_and_vars, train_config.gradient_clipping_by_norm)
 
       # Create gradient updates.
