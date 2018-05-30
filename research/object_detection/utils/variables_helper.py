@@ -137,7 +137,7 @@ def get_variables_available_in_checkpoint(variables,
                         'incompatible shape with model variable.',
                         variable_name)
     else:
-      logging.warning('Variable [%s] is not available in checkpoint',
+      tf.logging.warning('Variable [%s] is not available in checkpoint',
                       variable_name)
   if isinstance(variables, list):
     return vars_in_ckpt.values()

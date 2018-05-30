@@ -517,17 +517,16 @@ class FasterRCNNMetaArch(model.DetectionModel):
     """
     if inputs.dtype is not tf.float32:
       raise ValueError('`preprocess` expects a tf.float32 tensor')
-    with tf.device("/CPU:0"):
-      with tf.name_scope('Preprocessor'):
-        outputs = shape_utils.static_or_dynamic_map_fn(
-          self._image_resizer_fn,
-          elems=inputs,
-          dtype=[tf.float32, tf.int32],
-          parallel_iterations=self._parallel_iterations)
-        resized_inputs = outputs[0]
-        true_image_shapes = outputs[1]
-        return (self._feature_extractor.preprocess(resized_inputs),
-                true_image_shapes)
+    with tf.name_scope('Preprocessor'):
+      outputs = shape_utils.static_or_dynamic_map_fn(
+        self._image_resizer_fn,
+        elems=inputs,
+        dtype=[tf.float32, tf.int32],
+        parallel_iterations=self._parallel_iterations)
+      resized_inputs = outputs[0]
+      true_image_shapes = outputs[1]
+      return (self._feature_extractor.preprocess(resized_inputs),
+              true_image_shapes)
 
   def _compute_clip_window(self, image_shapes):
     """Computes clip window for non max suppression based on image shapes.
