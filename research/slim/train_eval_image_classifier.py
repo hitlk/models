@@ -394,8 +394,9 @@ def main(_):
   tf.logging.set_verbosity(tf.logging.INFO)
 
   # start tensorboard for observing training and evaluation progress.
-  subprocess.Popen(["tensorboard", "--logdir", FLAGS.train_dir, "--port", "6006"])
-  subprocess.Popen(["tensorboard", "--logdir", FLAGS.eval_dir, "--port", "6007"])
+  logdir_str = "train:%s,eval:%s" % (FLAGS.train_dir, FLAGS.eval_dir)
+  subprocess.Popen(["tensorboard", "--logdir", logdir_str, "--port", "6006"])
+  # subprocess.Popen(["tensorboard", "--logdir", FLAGS.eval_dir, "--port", "6007"])
 
   # evaluate checkpoint's performance while training
   subprocess.Popen([

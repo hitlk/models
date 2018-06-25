@@ -396,7 +396,7 @@ class MaskRCNNBoxPredictor(BoxPredictor):
         the proposals.
     """
     spatial_averaged_image_features = tf.reduce_mean(image_features, [1, 2],
-                                                     keep_dims=True,
+                                                     keepdims=True,
                                                      name='AvgPool')
     flattened_image_features = slim.flatten(spatial_averaged_image_features)
     if self._use_dropout:
